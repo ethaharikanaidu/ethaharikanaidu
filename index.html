@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>US Elections</title>
+    <!-- CSS -->
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .header {
+            background: steelblue;
+            color: white;
+            display: flex;
+            padding: 12px;
+        }
+
+        .header > h1 {
+            flex: 1;
+            margin: 24px 12px;
+        }
+
+        .trump-clinton {
+            width: 300px;
+            height: 100px;
+            border-radius: 3px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 12px;
+        }
+
+        .container-fluid {
+            padding: 24px;
+        }
+
+        .graph > .title {
+            min-height: 40px;
+            background: black;
+            opacity: .65;
+            color: white;
+            padding: 8px;
+            font-weight: bold;
+        }
+
+        .chart {
+            height: 500px;
+        }
+
+        .svg-tooltip {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple   Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background: steelblue;
+            border-radius: .1rem;
+            color: #fff;
+            display: block;
+            font-size: 11px;
+            max-width: 320px;
+            padding: .2rem .4rem;
+            position: absolute;
+            text-overflow: ellipsis;
+            white-space: pre;
+            z-index: 300;
+            visibility: hidden;
+        }
+       .tick > text{
+           font-size: 14px
+        }
+    </style>
+</head>
+<body class="bg-gray-200">
+<div class="shadow-2xl lg:grid lg:grid-cols-3 bg-red-500 p-4">
+    <div class="px-8 flex justify-center overflow-hidden">
+        <img  class="w-24 h-24 rounded-full"  src="./images/clinton.jpeg" alt="">
+    </div>
+    <div class="text-white  text-center text-4xl mt-6">
+        <span>
+             US 2016 Presidential Election
+        </span>
+    </div>
+    <div class="px-8 flex justify-center ">
+        <img  class="w-24 h-24 rounded-full object-cover"  src="./images/trump.jpeg" alt="">
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="grid lg:grid-cols-2 gap-8 m-8">
+        <div class="shadow-2xl bg-white rounded-xl pt-8 ">
+            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Party that gained majority state-wise</div>
+            <div class="text-gray-500 text-center text-sm mt-4">Click States to see details</div>
+            <div class="chart" id="state-map">
+
+            </div>
+        </div>
+        <div class="shadow-2xl bg-white rounded-xl pt-8">
+            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Top 10 voting Counties by State</div>
+            <div class="chart mx-4" id="stack-chart">
+
+            </div>
+        </div>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-8 m-8">
+        <div class="shadow-2xl bg-white rounded-xl pt-8">
+            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">State Distribution of Votes by Party</div>
+            <div class="text-gray-500 text-center text-sm mt-4">Click States to see details</div>
+            <div class="chart" id="tree">
+
+            </div>
+        </div>
+        <div class="shadow-2xl bg-white rounded-xl pt-8">
+            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Top 10 Voting States</div>
+            <div class="text-gray-500 text-center text-sm mt-4">Mouseover  Circles to see value</div>
+            <div class="chart px-4" id="scatter-plot">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery and JS bundle w/ Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script src="js/map.js"></script>
+<script src="js/scatterplot.js"></script>
+<script src="js/tree.js"></script>
+<script src="js/stackChart.js"></script>
+<script>
+
+    Promise.all([d3.csv('./data/usa-2016-presidential-election-by-county.csv'), d3.json('./data/states-albers-10m.json')]).then(([data, stateData]) => {
+        let height = document.getElementById('state-map').getBoundingClientRect().height;
+        const map = setupMap(data, stateData, {width: height * 2, height, id: "state-map"});
+        const scatterPlot = setupScatterPlot(data, {width: height * 2, height, id: "scatter-plot"});
+        const tree = setupTree(data, {width: height * 2, height, id: "tree"});
+        map.setUpdateTree(tree.updateTree)
+        const stackBar = setupStackChart(data, {width: height * 2, height, id: "stack-chart", stateChanged : map.stateChanged})
+    })
+</script>
+<div class="svg-tooltip">
+
+</div>
+</body>
+</html>
