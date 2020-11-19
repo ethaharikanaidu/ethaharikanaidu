@@ -46,7 +46,7 @@
         }
 
         .chart {
-            height: 550px;
+            height: 350px;
         }
 
         .svg-tooltip {
@@ -64,15 +64,16 @@
             z-index: 300;
             visibility: hidden;
         }
-       .tick > text{
-           font-size: 14px
+
+        .tick > text {
+            font-size: 14px
         }
     </style>
 </head>
 <body class="bg-gray-200">
 <div class="shadow-2xl lg:grid lg:grid-cols-3 bg-red-500 p-4">
     <div class="px-8 flex justify-center overflow-hidden">
-        <img  class="w-24 h-24 rounded-full"  src="./images/clinton.jpeg" alt="">
+        <img class="w-24 h-24 rounded-full" src="./images/clinton.jpeg" alt="">
     </div>
     <div class="text-white  text-center text-4xl mt-6">
         <span>
@@ -80,28 +81,33 @@
         </span>
     </div>
     <div class="px-8 flex justify-center ">
-        <img  class="w-24 h-24 rounded-full object-cover"  src="./images/trump.jpeg" alt="">
+        <img class="w-24 h-24 rounded-full object-cover" src="./images/trump.jpeg" alt="">
     </div>
 </div>
 <div class="container-fluid">
-    <div class="grid lg:grid-cols-2 gap-8 m-8">
+    <div class="m-1">
         <div class="shadow-2xl bg-white rounded-xl pt-8 ">
-            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Party that gained majority state-wise</div>
-            <div class="text-gray-500 text-center text-sm mt-4">Click States to see details</div>
-            <div class="chart" id="state-map">
-
+            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Party that gained majority
+                state-wise
             </div>
-        </div>
-        <div class="shadow-2xl bg-white rounded-xl pt-8">
-            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Top 10 voting Counties by State</div>
-            <div class="chart mx-4" id="stack-chart">
+            <div class="text-gray-500 text-center text-sm mt-4">Click States to see details</div>
+            <div class="chart mt-12" style="height: 600px" id="state-map">
 
             </div>
         </div>
     </div>
-    <div class="grid lg:grid-cols-2 gap-8 m-8">
+    <div class="grid lg:grid-cols-3 gap-2 m-1 mt-4">
+        <div class="shadow-2xl grid-cols-2 bg-white rounded-xl pt-8">
+            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Top 10 voting Counties by
+                State
+            </div>
+            <div class="chart mx-1" id="stack-chart">
+            </div>
+        </div>
         <div class="shadow-2xl bg-white rounded-xl pt-8">
-            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">State Distribution of Votes by Party</div>
+            <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">State Distribution of Votes
+                by Party
+            </div>
             <div class="text-gray-500 text-center text-sm mt-4">Click States to see details</div>
             <div class="chart" id="tree">
 
@@ -109,8 +115,8 @@
         </div>
         <div class="shadow-2xl bg-white rounded-xl pt-8">
             <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Top 10 Voting States</div>
-            <div class="text-gray-500 text-center text-sm mt-4">Mouseover  Circles to see value</div>
-            <div class="chart px-4" id="scatter-plot">
+            <div class="text-gray-500 text-center text-sm mt-4">Mouseover Circles to see value</div>
+            <div class="chart px-1" id="scatter-plot">
 
             </div>
         </div>
@@ -137,7 +143,12 @@
         const scatterPlot = setupScatterPlot(data, {width: height * 2, height, id: "scatter-plot"});
         const tree = setupTree(data, {width: height * 2, height, id: "tree"});
         map.setUpdateTree(tree.updateTree)
-        const stackBar = setupStackChart(data, {width: height * 2, height, id: "stack-chart", stateChanged : map.stateChanged})
+        const stackBar = setupStackChart(data, {
+            width: height * 2,
+            height,
+            id: "stack-chart",
+            stateChanged: map.stateChanged
+        })
     })
 </script>
 <div class="svg-tooltip">
