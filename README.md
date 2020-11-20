@@ -16,9 +16,9 @@ https://ethaharikanaidu.github.io/ethaharikanaidu/
 #### Links to Original Datasets
 https://www.kaggle.com/tunguz/us-elections-dataset
 
- 
- <hr  />
- #### Work Breakdown 
+<hr />
+
+#### Work Breakdown
  
 1) Creation of 4 Observable charts. - Harika Naidu Etha 
 2) Conversion of 4 Observable charts to Standard d3 charts deployable to Github- Mugdha Patil
