@@ -156,7 +156,7 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
         .attr("x", 24)
         .attr("y", 8)
         .attr("dy", ".15em")
-        .attr("font-size", 10)
+        .attr("font-size", 16)
         .text(function (d) {
             return d.name;
         });

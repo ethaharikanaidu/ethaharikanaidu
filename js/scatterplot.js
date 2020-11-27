@@ -8,16 +8,16 @@ function setupScatterPlot(data, {width, height, id}) {
             democrats_vote: d3.sum(v, (d) => +d['Votes16 Clintonh'])
         };
     }).entries(data).map(d => d.value).sort((a, b) => {
-            return (b.republicans_vote + b.democrats_vote) > (a.republicans_vote + a.democrats_vote)
-        });
+        return (b.republicans_vote + b.democrats_vote) > (a.republicans_vote + a.democrats_vote)
+    });
 
     const democrats = "#3984D8";
     const republicans = "#DB594C";
     const formatComma = d3.format(",");
-    const topN = 10;
+    const topN = data.length;
     var topNData = data.slice(0, topN)
     var dimensions = {
-        width ,
+        width,
         height,
         margin: {
             top: 40,
@@ -34,15 +34,17 @@ function setupScatterPlot(data, {width, height, id}) {
     dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom
 
     var xScale = d3.scaleBand()
-        .domain(topNData.map(function(d) { return d.state; }))
+        .domain(topNData.map(function (d) {
+            return d.state;
+        }))
         .padding(.2)
-        .range([ 0, dimensions.boundedWidth ]);
+        .range([0, dimensions.boundedWidth]);
 
     var yScale = d3.scaleLinear()
-        .domain([0,d3.max(topNData, d=>{
+        .domain([0, d3.max(topNData, d => {
             return Math.max(d.republicans_vote, d.democrats_vote)
         })])
-        .range([dimensions.boundedHeight,0])
+        .range([dimensions.boundedHeight, 0])
 
     var svg = d3.select('#' + id).append('svg')
         .attr("viewBox", [0, 0, dimensions.width, dimensions.height])
@@ -57,7 +59,7 @@ function setupScatterPlot(data, {width, height, id}) {
 
     var xAxisGen = d3.axisBottom(xScale);
 
-    var xAxis  = bounds.append("g")
+    var xAxis = bounds.append("g")
         .attr("transform", "translate(0," + (dimensions.boundedHeight) + ")")
         .call(xAxisGen)
         .call(g => g.append("text")
@@ -70,71 +72,115 @@ function setupScatterPlot(data, {width, height, id}) {
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
-        .attr("transform", "rotate(-65)" );
+        .attr("transform", "rotate(-65)");
 
     var yAxisGen = d3.axisLeft(yScale);
 
-    var yAxis =  bounds.append("g")
+    var yAxis = bounds.append("g")
         .call(yAxisGen);
 
     // fatten the data
     var allData = [];
-    topNData.forEach(d=>{
-        allData.push({
-            state : d.state,
-            value : d.democrats_vote,
-            color : democrats
-        });
-        allData.push({
-            state : d.state,
-            value : d.republicans_vote,
-            color : republicans
-        });
+    topNData.forEach(d => {
+        allData.push([{
+            state: d.state,
+            value: d.democrats_vote,
+            color: democrats
+        }, {
+            state: d.state,
+            value: d.republicans_vote,
+            color: republicans
+        }]);
     })
 
 
+    const circleRadius = 5;
+    const hoverCircleRadius = 10;
+    const lineWidth = 2;
+    const hoverLineWidth = 5;
+    let currentState = 'California'
+
     // add the circles
-    bounds.append("g")
-        .attr("stroke-width", 1.5)
-        .selectAll("circle")
-        .data(allData)
-        .enter()
-        .append("circle")
-        .attr("fill", d => d.color)
-        .attr('opacity', .8)
-        .attr("cx", d => xScale(d.state) + xScale.bandwidth()/2)
-        .attr("cy", d => yScale(d.value))
-        .attr("r", topN > 25 ? 7 : 10)
-        .on("mouseover", function(d){
-            tooltip.text(formatComma(d.value))
-            return tooltip.style("visibility", "visible");
-        })
-        .on("mousemove", function(){
-            return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
-        })
-        .on("mouseout", function(){
-            return tooltip.style("visibility", "hidden");
-        });;
+    const statesGContainer = bounds.append("g")
+        .attr('class', 'state-container');
+
+    function update() {
+        statesGContainer.html('')
+       const statesG =  statesGContainer.selectAll(".statesG")
+            .data(allData)
+            .enter()
+            .append('g')
+            .attr('class', 'statesG')
+            .attr('opacity', d => d[0].state === currentState ? 1 : .4)
+            .attr('transform', `translate(${xScale.bandwidth() / 2},0)`)
+            .on('mousemove', function () {
+                d3.select(this).selectAll('circle').attr('r', hoverCircleRadius)
+                d3.select(this).selectAll('.line').style('stroke-width', hoverLineWidth)
+            })
+            .on('mouseout', function () {
+                d3.select(this).selectAll('circle').attr('r', circleRadius)
+                d3.select(this).selectAll('.line').style('stroke-width', lineWidth)
+            });
+
+        //generate the line
+        const lineGen = d3.line()
+            .x(d => xScale(d.state))
+            .y(d => yScale(d.value));
+        statesG.append('path')
+            .style('stroke', 'grey')
+            .attr('class', 'line')
+            .attr('d', d=> lineGen(d))
+
+        const state = statesG.selectAll('.state').data(d => d).enter()
+            .append("circle")
+            .attr("fill", d => d.color)
+            .attr("cx", d => xScale(d.state))
+            .attr("cy", d => yScale(d.value))
+            .attr("r", circleRadius)
+            .on("mouseover", function (d) {
+                tooltip.text(formatComma(d.value))
+                tooltip.style("visibility", "visible");
+            })
+            .on("mousemove", function () {
+                d3.select(this).attr('r', hoverCircleRadius);
+                tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", function () {
+                d3.select(this).attr('r', circleRadius)
+                tooltip.style("visibility", "hidden");
+            });
+
+    }
 
 
     // Legend section
-    var legendData = [{name : "Clinton, Hillary", color : democrats},{name:"Trump, Donald J", color: republicans}]
-    var legend = svg.append('g').attr('transform', `translate(${.85 * dimensions.width},${ .05 * dimensions.height})`).selectAll('.legend').data(legendData).enter().append("g")
+    var legendData = [{name: "Clinton, Hillary", color: democrats}, {name: "Trump, Donald J", color: republicans}]
+    var legend = svg.append('g').attr('transform', `translate(${.85 * dimensions.width},${.05 * dimensions.height})`).selectAll('.legend').data(legendData).enter().append("g")
         .attr('class', 'legend')
-        .attr("transform", function(d, i) { return "translate(0," + i * 30 + ")"; });
+        .attr("transform", function (d, i) {
+            return "translate(0," + i * 30 + ")";
+        });
 
     legend.append("circle")
         .attr("r", 8.5)
-        .style("fill", d=> d.color);
+        .style("fill", d => d.color);
 
     legend.append("text")
         .attr("x", 24)
         .attr("x", 24)
         .attr("dy", ".15em")
-        .attr("font-size", 10)
-        .text(function(d) { return d.name; });
+        .attr("font-size", 16)
+        .text(function (d) {
+            return d.name;
+        });
 
-    return {
+    update();
 
+    function stateChanged(newState){
+        currentState = newState;
+        update();
     }
+
+
+    return {stateChanged}
 }

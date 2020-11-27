@@ -17,11 +17,6 @@ function setupMap(data, us, {width, height, id}) {
         height
     }
 
-    var updateTree;
-    function setUpdateTree(fn){
-        updateTree = fn;
-    }
-
     function fillOpacity(d) {
         if (d.properties.name === selectedState) {
             return 1;
@@ -38,7 +33,6 @@ function setupMap(data, us, {width, height, id}) {
             }
             return .3
         })
-        updateTree(selectedState)
     }
 
     const svg = d3.select('#' + id).append('svg')
@@ -115,5 +109,5 @@ function setupMap(data, us, {width, height, id}) {
         .text(function (d) {
             return d.name;
         });
-    return {stateChanged, setUpdateTree}
+    return {stateChanged}
 }
