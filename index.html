@@ -128,13 +128,14 @@
         The above charts highlight the votes based on popularity, however, the United States does not Elect Presidents
         based on Popular votes.
         <ul class="pl-4 text-sm mt-4 mb-4 text-gray-700 leading-7">
-            <li>The Pie Chart below shows the Electoral votes of each candidate in the election. </li>
+            <li>The Sunburst Chart below shows the Electoral votes of each candidate in the election. </li>
             <li>The candidate with the higher Electoral votes <strong>(Donald J Trump)</strong> was declared the winner of the Election
             </li>
         </ul>
         <div class="grid grid-cols-4  text-center mt-8">
             <div class="shadow-2xl col-start-2 col-span-2 bg-white rounded-xl pt-8">
                 <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Total Electoral votes by Candidates</div>
+                <div class="text-gray-500 text-center text-sm mt-4 mb-4">Click the arcs to zoom in. Click the Circle at center to zoom out.</div>
                 <div class="chart px-1" id="pie-chart">
                 </div>
             </div>
@@ -144,8 +145,9 @@
   <div class="grid grid-cols-6">
       <div class="text-black-800 col-start-3">
           <div class="text-xl">Data Sources</div>
-          <ul class="text-blue-500 text-sm pl-4">
+          <ul class="text-blue-500 text-sm">
               <li><a href="https://www.kaggle.com/tunguz/us-elections-dataset" target="_blank">Kaggle</a></li>
+              <li><a href="https://data.world/dash/2016-electoral-college-results" target="_blank">Electoral Votes 2016</a></li>
               <li><a href="https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json" target="_blank">US States
                   GeoJSON</a></li>
           </ul>
@@ -153,7 +155,7 @@
 
       <div class="text-black-800">
           <div class="text-xl">Reference Codebases</div>
-          <ul class="text-blue-500 text-sm pl-4">
+          <ul class="text-blue-500 text-sm">
               <li>
                   <a href="https://www.d3indepth.com/shapes/" target="_blank"> D3 Line</a>
               </li>
@@ -166,6 +168,9 @@
               </li>
               <li>
                   <a href="https://www.d3-graph-gallery.com/graph/pie_basic.html" target="_blank">Pie Chart</a>
+              </li>
+              <li>
+                  <a href="https://vizhub.com/NeonMika/7fcc84f68758417a8a1f6076410e98ab?edit=files&file=index.js&line" target="_blank">Zoomable Sun Burst</a>
               </li>
           </ul>
       </div>
@@ -183,11 +188,13 @@
 <script src="//d3js.org/topojson.v1.min.js"></script>
 <script src="js/map.js"></script>
 <script src="js/scatterplot.js"></script>
-<script src="js/piechart.js"></script>
+<script src="js/sunburst.js"></script>
 <script src="js/stackChart.js"></script>
 <script>
 
-    Promise.all([d3.csv('./data/usa-2016-presidential-election-by-county.csv'), d3.json('./data/states-albers-10m.json')]).then(([data, stateData]) => {
+    Promise.all([d3.csv('./data/usa-2016-presidential-election-by-county.csv')
+        ,d3.csv('./data/electoral-votes-2016.csv', d3.autoType)
+        , d3.json('./data/states-albers-10m.json')]).then(([data, electoralVotes, stateData]) => {
         let height = document.getElementById('state-map').getBoundingClientRect().height;
         const map = setupMap(data, stateData, {width: height * 2, height, id: "state-map"});
         const scatterPlot = setupScatterPlot(data, {width: height * 2, height, id: "scatter-plot"});
@@ -200,7 +207,7 @@
                 scatterPlot.stateChanged(newState);
             }
         });
-        const pieChart = setupPieChart({width: height * 2, height, id: "pie-chart"})
+        const sunburst = setupSunburst(electoralVotes,{width: height * 2, height, id: "pie-chart"})
     })
 </script>
 <div class="svg-tooltip">
