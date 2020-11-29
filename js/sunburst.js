@@ -30,36 +30,24 @@ function setupSunburst(data, {width, height, id}) {
     const flareData = {
         name: "flare",
         children: [
-            {
-                name: "Republicans",
-                color: republicans,
-                total : d3.sum(data.Republicans, d=>d.value),
-                children: data.Republicans
-            },
-            {
-                name: "Democrats",
-                color: democrats,
-                total : d3.sum(data.Democrats, d=>d.value),
-                children: data.Democrats
-            }
+            ...data.Republicans.map(d=> {return {...d, color : republicans}}),
+            ...data.Democrats.map(d=> {return {...d, color : democrats}})
         ]
     }
-    console.log(flareData)
 
-    const radius = width / 8;
+    const radius = width / 5;
 
     const arc = d3.arc()
         .startAngle(d => d.x0)
         .endAngle(d => d.x1)
         .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
         .padRadius(radius * 1.5)
-        .innerRadius(d => d.y0 * radius)
+        .innerRadius(d =>0)
         .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
     const partition = data => {
         const root = d3.hierarchy(data)
             .sum(d => d.value)
-            .sort((a, b) => b.value - a.value);
         return d3.partition()
             .size([2 * Math.PI, root.height + 1])
             (root);
@@ -82,21 +70,17 @@ function setupSunburst(data, {width, height, id}) {
         .selectAll("path")
         .data(root.descendants().slice(1))
         .join("path")
+        .style('fill-opacity', .3)
+        .style('stroke', 'black')
+        .style('stroke-width', .2)
+        .style("cursor", "pointer")
         .attr("fill", d => {
-            while (d.depth > 1)
-                d = d.parent;
-
             return d.data.color;
         })
-        .attr("fill-opacity", d => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)
         .attr("d", d => arc(d.current));
 
-    path.filter(d => d.children)
-        .style("cursor", "pointer")
-        .on("click", clicked);
 
     const label = g.append("g")
-        .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
         .style("user-select", "none")
         .selectAll("text")
@@ -167,7 +151,7 @@ function setupSunburst(data, {width, height, id}) {
 
     // Legend section
     var legendData = [{name: "Clinton, Hillary", color: democrats}, {name: "Trump, Donald J", color: republicans}]
-    var legend = svg.append('g').attr('transform', `translate(${.8 * dimensions.width},${.8 * dimensions.height})`).selectAll('.legend').data(legendData).enter().append("g")
+    var legend = svg.append('g').attr('transform', `translate(${.8 * dimensions.width},${ dimensions.height + 70})`).selectAll('.legend').data(legendData).enter().append("g")
         .attr('class', 'legend')
         .attr("transform", function (d, i) {
             return "translate(0," + i * 20 + ")";
