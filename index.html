@@ -198,16 +198,19 @@
         let height = document.getElementById('state-map').getBoundingClientRect().height;
         const map = setupMap(data, stateData, {width: height * 2, height, id: "state-map"});
         const scatterPlot = setupScatterPlot(data, {width: height * 2, height, id: "scatter-plot"});
-        const stackBar = setupStackChart(data, {
+        let sunburst;
+        const stateChanged = function(newState) {
+            map.stateChanged(newState);
+            scatterPlot.stateChanged(newState);
+            sunburst.setSelectedState(newState);
+        }
+        let stackBar = setupStackChart(data, {
             width: height * 2,
             height,
             id: "stack-chart",
-            stateChanged: (newState) => {
-                map.stateChanged(newState);
-                scatterPlot.stateChanged(newState);
-            }
+            stateChanged
         });
-        const sunburst = setupSunburst(electoralVotes,{width: height * 2, height, id: "pie-chart"})
+         sunburst = setupSunburst(electoralVotes,{width: height * 2, height, id: "pie-chart"})
     })
 </script>
 <div class="svg-tooltip">

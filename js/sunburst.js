@@ -1,4 +1,4 @@
-function setupSunburst(data, {width, height, id}) {
+function setupSunburst(data, {width, height, id, stateChanged}) {
     const democrats = "#3984D8";
     const republicans = "#DB594C";
     var dimensions = {
@@ -91,7 +91,8 @@ function setupSunburst(data, {width, height, id}) {
         })
         .attr("d", d => arc(d.current))
         .on('click', function(d){
-            setSelectedState(d.data.name)
+            setSelectedState(d.data.name);
+            d3.select('#state-select').property('value', d.data.name).on('change')()
         })
 
 
@@ -143,5 +144,5 @@ function setupSunburst(data, {width, height, id}) {
             return d.name;
         });
 
-    return {}
+    return {setSelectedState}
 }

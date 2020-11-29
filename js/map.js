@@ -18,7 +18,7 @@ function setupMap(data, us, {width, height, id}) {
     }
 
     function fillOpacity(d) {
-        if (d.properties.name === selectedState) {
+        if ((d.properties || d.data).name === selectedState) {
             return 1;
         }
         return .5

@@ -29,6 +29,11 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
         }
     }
 
+    function setNewState(newState){
+        currentState = newState;
+        update();
+    }
+
     //setup the dropdown select
     const dropdown = d3.select('#' + id)
         .append('div')
@@ -38,9 +43,9 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
         .attr('class',  'border-2 rounded p-2 border-gray-400')
         .style('margin-top', '12px')
         .on('change', function (){
-            currentState = d3.select('#state-select').property('value');
-            update();
-            stateChanged(currentState)
+            const newState = d3.select('#state-select').property('value');
+            setNewState(newState);
+            stateChanged(newState)
         })
     dropdown .selectAll('option')
         .data(Object.keys(dataByState))
@@ -161,6 +166,9 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
             return d.name;
         });
 
+    return {
+        setNewState
+    }
 }
 
 getCounty = function (d) {
