@@ -12,7 +12,9 @@ function setupSunburst(data, {width, height, id}) {
         }
     }
     dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right
-    dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom
+    dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
+
+    let selectedState = 'California'
 
 
     // group the data by party
@@ -66,18 +68,31 @@ function setupSunburst(data, {width, height, id}) {
     const g = svg.append('g')
         .attr("transform", "translate(" + dimensions.width / 2 + "," + dimensions.height / 1.8 + ")");
 
+    function setOpacity(d){
+        return d.data.name === selectedState ?  1 : .3
+    }
+
+    function setSelectedState(newState){
+        selectedState = newState;
+        g.selectAll('.state-path')
+            .style('fill-opacity', setOpacity)
+    }
     const path = g.append("g")
         .selectAll("path")
         .data(root.descendants().slice(1))
         .join("path")
-        .style('fill-opacity', .3)
+        .attr('class', 'state-path')
+        .style('fill-opacity', setOpacity)
         .style('stroke', 'black')
         .style('stroke-width', .2)
         .style("cursor", "pointer")
         .attr("fill", d => {
             return d.data.color;
         })
-        .attr("d", d => arc(d.current));
+        .attr("d", d => arc(d.current))
+        .on('click', function(d){
+            setSelectedState(d.data.name)
+        })
 
 
     const label = g.append("g")
@@ -91,52 +106,9 @@ function setupSunburst(data, {width, height, id}) {
         .attr("transform", d => labelTransform(d.current))
         .attr("font-size", d => d.children ? "15" : "13")
         .attr('fill', '#262626')
-        .html(d => d.data.name + " <tspan fill='red' font-weight='bold'>(" +  (d.data.total || d.data.value) + ")</tspan>");
-
-    const parent = g.append("circle")
-        .datum(root)
-        .attr("r", radius)
-        .attr("fill", "none")
-        .attr("pointer-events", "all")
-        .on("click", clicked);
-
-    function clicked(p) {
-        parent.datum(p.parent || root);
-
-        root.each(d => d.target = {
-            x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
-            x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
-            y0: Math.max(0, d.y0 - p.depth),
-            y1: Math.max(0, d.y1 - p.depth)
-        });
-
-        const t = g.transition().duration(750);
-
-        // Transition the data on all arcs, even the ones that aren’t visible,
-        // so that if this transition is interrupted, entering arcs will start
-        // the next transition from the desired position.
-        path.transition(t)
-            .tween("data", d => {
-                const i = d3.interpolate(d.current, d.target);
-                return t => d.current = i(t);
-            })
-            .filter(function (d) {
-                return +this.getAttribute("fill-opacity") || arcVisible(d.target);
-            })
-            .attr("fill-opacity", d => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
-            .attrTween("d", d => () => arc(d.current));
-
-        label.filter(function (d) {
-            return +this.getAttribute("fill-opacity") || labelVisible(d.target);
-        }).transition(t)
-            .attr("fill-opacity", d => +labelVisible(d.target))
-            .attrTween("transform", d => () => labelTransform(d.current));
-    }
+        .html(d => d.data.name + " <tspan fill='#262626' font-weight='bold'>(" +  (d.data.total || d.data.value) + ")</tspan>");
 
 
-    function arcVisible(d) {
-        return d.y1 <= 2 && d.y0 >= 1 && d.x1 > d.x0;
-    }
 
     function labelVisible(d) {
         return d.y1 <= 2 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
