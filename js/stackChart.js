@@ -40,7 +40,7 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
         .attr('class',  'p-2 text-center')
         .append('select')
         .attr('id', 'state-select')
-        .attr('class',  'border-2 rounded p-2 border-gray-400')
+        .attr('class',  'border-2 rounded p-2 border-gray-400 mb-2')
         .style('margin-top', '12px')
         .on('change', function (){
             const newState = d3.select('#state-select').property('value');
@@ -57,7 +57,7 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
     dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right
     dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom
     var svg = d3.select('#' + id).append('svg')
-        .attr("viewBox", [-30, 250, dimensions.width, dimensions.height /3])
+        .attr("viewBox", [-30, 240, dimensions.width, dimensions.height /3])
         .attr('width', '100%')
         .attr('height', '100%')
 
