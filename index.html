@@ -46,7 +46,7 @@
         }
 
         .chart {
-            height: 350px;
+            height: 250px;
         }
 
         .svg-tooltip {
@@ -85,9 +85,9 @@
     </div>
 </div>
 <div class="container-fluid">
-    <div class="mb-8 text-lg text-gray-800">
+    <div class="mb-2 text-lg text-gray-800">
         This Dashboard shows the information about the United States Presidential Elections in 2016.
-        <ul class="pl-4 text-sm mt-4  text-gray-700 leading-7">
+        <ul class="pl-4 text-sm mt-2  text-gray-700 leading-7">
             <li>1. The US Choroplet shows the distribution of Popular votes by party. The state under selected has
                 higher opacity than other states.
             </li>
@@ -97,46 +97,46 @@
             </li>
         </ul>
     </div>
-    <div class="m-1">
-        <div class="shadow-2xl bg-white rounded-xl pt-8 ">
+    <div class="text-lg text-red-800">
+        The First 3 charts highlight the votes based on popularity, however, the United States does not Elect Presidents
+        based on Popular votes.
+        <ul class="pl-4 text-sm mt-2 mb-4 text-gray-700 leading-7">
+            <li>The Sunburst Chart below shows the Electoral votes of each candidate in the election. </li>
+            <li>The candidate with the higher Electoral votes <strong>(Donald J Trump)</strong> was declared the winner of the Election
+            </li>
+        </ul>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-2 mt-4 m-1">
+        <div class="bg-white rounded-xl pt-8 ">
             <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Party that gained majority
                 state-wise
             </div>
             <div class="text-gray-500 text-center text-sm mt-4">Click States to see details</div>
-            <div class="chart mt-12" style="height: 600px" id="state-map">
+            <div class="chart mt-12" style="height: 350px" id="state-map">
 
             </div>
         </div>
-    </div>
-    <div class="grid lg:grid-cols-2 gap-2 m-1 mt-4">
-        <div class="shadow-2xl grid-cols-2 bg-white rounded-xl pt-8">
+        <div class="grid-cols-2 bg-white rounded-xl pt-8">
             <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Top 10 voting Counties by
                 State
             </div>
             <div class="chart mx-1" id="stack-chart">
             </div>
         </div>
-        <div class="shadow-2xl bg-white rounded-xl pt-8">
+    </div>
+    <div class="grid lg:grid-cols-2 gap-2 m-1 mt-4">
+        <div class=" bg-white rounded-xl pt-8">
             <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Voting States</div>
             <div class="text-gray-500 text-center text-sm mt-4">Mouseover Circles to see value</div>
             <div class="chart px-1" id="scatter-plot">
 
             </div>
         </div>
-    </div>
-    <div class="mt-24 text-xl text-red-800">
-        The above charts highlight the votes based on popularity, however, the United States does not Elect Presidents
-        based on Popular votes.
-        <ul class="pl-4 text-sm mt-4 mb-4 text-gray-700 leading-7">
-            <li>The Sunburst Chart below shows the Electoral votes of each candidate in the election. </li>
-            <li>The candidate with the higher Electoral votes <strong>(Donald J Trump)</strong> was declared the winner of the Election
-            </li>
-        </ul>
-        <div class="grid grid-cols-4  text-center mt-8">
-            <div class="shadow-2xl col-start-2 col-span-2 bg-white rounded-xl pt-8">
+        <div class="bg-white rounded-xl">
+            <div class="col-start-2 col-span-2 bg-white rounded-xl pt-8">
                 <div class="text-blue-800 text-center text-lg border-b-2 border-gray-400 pb-2">Total Electoral votes by Candidates</div>
                 <div class="text-gray-500 text-center text-sm mt-4 mb-4">Click the arc for each State.</div>
-                <div class="px-1" id="pie-chart" style="height: 600px">
+                <div class="px-1" id="pie-chart" style="height: 350px">
                 </div>
             </div>
         </div>
@@ -205,12 +205,12 @@
             sunburst.setSelectedState(newState);
         }
         let stackBar = setupStackChart(data, {
-            width: height * 2,
-            height,
+            width: document.getElementById('state-map').getBoundingClientRect().width,
+            height : 600,
             id: "stack-chart",
             stateChanged
         });
-         sunburst = setupSunburst(electoralVotes,{width: height * 2, height, id: "pie-chart"})
+         sunburst = setupSunburst(electoralVotes,{width: document.getElementById('state-map').getBoundingClientRect().width, height : 350, id: "pie-chart"})
     })
 </script>
 <div class="svg-tooltip">

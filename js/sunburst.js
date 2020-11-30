@@ -66,7 +66,7 @@ function setupSunburst(data, {width, height, id, stateChanged}) {
         .attr('width', '100%')
         .attr('height', '100%')
     const g = svg.append('g')
-        .attr("transform", "translate(" + dimensions.width / 2 + "," + dimensions.height / 1.8 + ")");
+        .attr("transform", "translate(" + dimensions.width / 2 + "," + dimensions.height / 1.8 + ") scale(.5)");
 
     function setOpacity(d){
         return d.data.name === selectedState ?  1 : .3
@@ -93,12 +93,13 @@ function setupSunburst(data, {width, height, id, stateChanged}) {
         .on('click', function(d){
             setSelectedState(d.data.name);
             d3.select('#state-select').property('value', d.data.name).on('change')()
-        })
+        }) .append('title')
+        .text(d=>d.data.name);
 
 
     const label = g.append("g")
         .attr("text-anchor", "middle")
-        .style("user-select", "none")
+        //.style("user-select", "none")
         .selectAll("text")
         .data(root.descendants().slice(1))
         .join("text")
@@ -107,7 +108,14 @@ function setupSunburst(data, {width, height, id, stateChanged}) {
         .attr("transform", d => labelTransform(d.current))
         .attr("font-size", d => d.children ? "15" : "13")
         .attr('fill', '#262626')
-        .html(d => d.data.name + " <tspan fill='#262626' font-weight='bold'>(" +  (d.data.total || d.data.value) + ")</tspan>");
+        .style("cursor", "pointer")
+        .on('click', function(d){
+            setSelectedState(d.data.name);
+            d3.select('#state-select').property('value', d.data.name).on('change')()
+        })
+        .html(d => d.data.name + " <tspan fill='#262626' font-weight='bold'>(" +  (d.data.total || d.data.value) + ")</tspan>")
+        .append('title')
+        .text(d=>d.data.name);
 
 
 
@@ -124,7 +132,8 @@ function setupSunburst(data, {width, height, id, stateChanged}) {
 
     // Legend section
     var legendData = [{name: "Clinton, Hillary", color: democrats}, {name: "Trump, Donald J", color: republicans}]
-    var legend = svg.append('g').attr('transform', `translate(${.8 * dimensions.width},${ dimensions.height + 70})`).selectAll('.legend').data(legendData).enter().append("g")
+    var legend = svg.append('g')
+        .attr('transform', `translate(${.72 * dimensions.width},${ dimensions.height * .7 })`).selectAll('.legend').data(legendData).enter().append("g")
         .attr('class', 'legend')
         .attr("transform", function (d, i) {
             return "translate(0," + i * 20 + ")";
@@ -138,8 +147,8 @@ function setupSunburst(data, {width, height, id, stateChanged}) {
     legend.append("text")
         .attr("x", 24)
         .attr("y", 8)
-        .attr("dy", ".15em")
-        .attr("font-size", 16)
+        .attr("dy", ".1em")
+        .attr("font-size", 12)
         .text(function (d) {
             return d.name;
         });

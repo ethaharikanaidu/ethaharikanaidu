@@ -57,9 +57,11 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
     dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right
     dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom
     var svg = d3.select('#' + id).append('svg')
-        .attr("viewBox", [-30, 240, dimensions.width, dimensions.height /3])
+        .attr("viewBox", [-70, 20, dimensions.width, dimensions.height/2])
         .attr('width', '100%')
         .attr('height', '100%')
+        .append('g')
+        .attr('transform', 'scale(.65)')
 
     function update() {
         svg.html("")

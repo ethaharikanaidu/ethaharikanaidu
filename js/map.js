@@ -36,11 +36,11 @@ function setupMap(data, us, {width, height, id}) {
     }
 
     const svg = d3.select('#' + id).append('svg')
-        .attr("viewBox", [0, 50, dimensions.width, dimensions.height])
+        .attr("viewBox", [-30, 50, dimensions.width, dimensions.height])
         .attr('width', '100%')
         .attr('height', '100%')
         .append('g')
-        .attr('transform', 'scale(.98)')
+        .attr('transform', 'scale(.62)')
     var stateFeatures = topojson.feature(us, us.objects.states).features;
     svg.append("g")
         .attr('cursor', 'pointer')
@@ -80,18 +80,23 @@ function setupMap(data, us, {width, height, id}) {
         })
         .attr("text-anchor", "middle")
         .attr('pointer-events', 'none')
-        .attr('fill', '#262626');
+        .attr('fill', '#262626')
+        .append('title')
+        .text(function (d) {
+            return data[d.properties.name].abbreviation
+        });;
+
 
     svg.append("path")
         .datum(topojson.mesh(us, us.objects.states, (a, b) => a !== b))
         .attr("fill", "none")
         .attr("stroke", "white")
         .attr("stroke-linejoin", "round")
-        .attr("d", path);
+        .attr("d", path)
 
     // Legend section
     var legendData = [{name: "Democrats", color: democrats}, {name: "Republicans", color: republicans}]
-    var legend = svg.append('g').attr('transform', `translate(${.85 * dimensions.width},${.85 * dimensions.height})`).selectAll('.legend').data(legendData).enter().append("g")
+    var legend = svg.append('g').attr('transform', `translate(${1.28 * dimensions.width},${1.05 * dimensions.height})`).selectAll('.legend').data(legendData).enter().append("g")
         .attr('class', 'legend')
         .attr("transform", function (d, i) {
             return "translate(0," + i * 30 + ")";
@@ -99,7 +104,7 @@ function setupMap(data, us, {width, height, id}) {
 
     legend.append("rect")
         .attr("width", 18)
-        .attr("height", 18)
+        .attr("height", 15)
         .style("fill", d => d.color);
 
     legend.append("text")
