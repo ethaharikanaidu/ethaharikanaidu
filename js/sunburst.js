@@ -1,4 +1,4 @@
-function setupSunburst(data, {width, height, id, stateChanged}) {
+function setupSunburst(data, {width, height, id, abbreviation}) {
     const democrats = "#3984D8";
     const republicans = "#DB594C";
     var dimensions = {
@@ -113,7 +113,7 @@ function setupSunburst(data, {width, height, id, stateChanged}) {
             setSelectedState(d.data.name);
             d3.select('#state-select').property('value', d.data.name).on('change')()
         })
-        .html(d => d.data.name + " <tspan fill='#262626' font-weight='bold'>(" +  (d.data.total || d.data.value) + ")</tspan>")
+        .html(d => abbreviation[d.data.name] + " <tspan fill='#262626' font-weight='bold'>(" +  (d.data.total || d.data.value) + ")</tspan>")
         .append('title')
         .text(d=>d.data.name);
 

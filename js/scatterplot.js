@@ -1,4 +1,4 @@
-function setupScatterPlot(data, {width, height, id}) {
+function setupScatterPlot(data, {width, height, id, abbreviation}) {
     data = d3.nest().key(d => d.State).rollup(function (v) {
 
         return {
@@ -47,17 +47,17 @@ function setupScatterPlot(data, {width, height, id}) {
         .range([dimensions.boundedHeight, 0])
 
     var svg = d3.select('#' + id).append('svg')
-        .attr("viewBox", [0, 0, dimensions.width, dimensions.height])
-        .attr('width', '100%')
-        .attr('height', '100%')
+       .attr("viewBox", [0, 0, dimensions.width, dimensions.height])
+        .attr('width', dimensions.width)
+        .attr('height', dimensions.height)
         .append('g')
-        .attr('transform', 'scale(.98)')
+        .attr('transform', `translate(0,${dimensions.margin.top})scale(.98)`);
 
     var bounds = svg.append("g")
         .style("transform", `translate(${dimensions.margin.left}px, ${dimensions.margin.top}px)`);
 
 
-    var xAxisGen = d3.axisBottom(xScale);
+    var xAxisGen = d3.axisBottom(xScale).tickFormat(d=> abbreviation[d]);
 
     var xAxis = bounds.append("g")
         .attr("transform", "translate(0," + (dimensions.boundedHeight) + ")")
@@ -72,12 +72,16 @@ function setupScatterPlot(data, {width, height, id}) {
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
-        .attr("transform", "rotate(-65)");
+        .style("font-size", "10")
+        .attr("transform", "rotate(-65)")
+        .append('title')
+        .text(d=>d)
 
     var yAxisGen = d3.axisLeft(yScale);
 
     var yAxis = bounds.append("g")
-        .call(yAxisGen);
+        .call(yAxisGen)
+        .call(g=>g.selectAll('text') .style('font-size', 10));
 
     // fatten the data
     var allData = [];
@@ -155,7 +159,7 @@ function setupScatterPlot(data, {width, height, id}) {
 
     // Legend section
     var legendData = [{name: "Clinton, Hillary", color: democrats}, {name: "Trump, Donald J", color: republicans}]
-    var legend = svg.append('g').attr('transform', `translate(${.85 * dimensions.width},${.05 * dimensions.height})`).selectAll('.legend').data(legendData).enter().append("g")
+    var legend = svg.append('g').attr('transform', `translate(${.65 * dimensions.width},${.05 * dimensions.height})`).selectAll('.legend').data(legendData).enter().append("g")
         .attr('class', 'legend')
         .attr("transform", function (d, i) {
             return "translate(0," + i * 30 + ")";
@@ -169,7 +173,7 @@ function setupScatterPlot(data, {width, height, id}) {
         .attr("x", 24)
         .attr("x", 24)
         .attr("dy", ".15em")
-        .attr("font-size", 16)
+        .attr("font-size", 10)
         .text(function (d) {
             return d.name;
         });

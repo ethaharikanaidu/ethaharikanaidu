@@ -35,6 +35,8 @@ function setupMap(data, us, {width, height, id}) {
         })
     }
 
+    const state = {}
+
     const svg = d3.select('#' + id).append('svg')
         .attr("viewBox", [-30, 50, dimensions.width, dimensions.height])
         .attr('width', '100%')
@@ -84,7 +86,9 @@ function setupMap(data, us, {width, height, id}) {
         .append('title')
         .text(function (d) {
             return data[d.properties.name].abbreviation
-        });;
+        });
+
+    console.log(JSON.stringify(state))
 
 
     svg.append("path")

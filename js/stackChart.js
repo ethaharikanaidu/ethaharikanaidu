@@ -94,6 +94,9 @@ function setupStackChart(data, {width, height, id, stateChanged}) {
 
         var yAxis = bounds.append("g").call(d3.axisLeft(yScale).tickSizeOuter(0))
             .call(g => g.selectAll(".domain").remove())
+            // .call(d=>{
+            //     d.selectAll('.tick text').
+            // })
 
         var rectG = bounds.append("g")
             .selectAll("g")
