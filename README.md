@@ -30,6 +30,6 @@ https://youtu.be/E3zG83-FFPg
 #### Work Breakdown
  
 1) Creation of 4 Observable charts- Harika Naidu Etha 
-2) Conversion of 4 Observable charts to Standard d3 charts deployable to Github- Mugdha Patil
+2) Conversion of 4 Observable charts to Standard D3 charts deployable to Github- Mugdha Patil
 3) Addition of interactivity to chart- Mugdha Patil
 4) Deployment to Github- Harika Naidu Etha
