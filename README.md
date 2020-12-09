@@ -21,6 +21,12 @@ https://www.kaggle.com/tunguz/us-elections-dataset
 
 <hr />
 
+#### Links to Project Description Video
+https://youtu.be/E3zG83-FFPg
+
+<hr />
+
+
 #### Work Breakdown
  
 1) Creation of 4 Observable charts- Harika Naidu Etha 
